@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>HR Portal — Hala Bissau Hotel</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#262262; --navy2:#1a1748; --navy3:#120f38;
+  --gold:#F8BC1A; --gold2:#fcd560;
+  --white:#fff; --off:#f7f6f3; --surface:#f0ede7;
+  --text:#1a1a1a; --text2:#4a4a4a; --text3:#7a7a7a;
+  --brd:#e5e0d5; --brd2:rgba(248,188,26,.18);
+  --g:#10b981; --r:#ef4444; --b:#3b82f6; --o:#f59e0b; --p:#8b5cf6;
+  --sw:248px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);background:var(--off);}
+img{display:block;}
+a{color:inherit;text-decoration:none;}
+button{cursor:pointer;font-family:inherit;}
+
+/* ── SHELL ── */
+#app{display:flex;width:100vw;height:100vh;overflow:hidden;}
+
+/* ── SIDEBAR ── */
+#sb{width:var(--sw);min-width:var(--sw);height:100%;background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;flex-shrink:0;}
+.sbh{padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:11px;}
+.sbh-ico{width:36px;height:36px;background:rgba(248,188,26,.12);border:1px solid rgba(248,188,26,.25);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sbh-ico svg{width:16px;height:16px;fill:none;stroke:var(--gold);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.sbh-name{font-family:'Playfair Display',serif;font-size:13px;color:#fff;letter-spacing:.04em;display:block;}
+.sbh-sub{font-size:.6rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.32);display:block;margin-top:1px;}
+.sb-sec-lbl{font-size:.58rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.25);padding:14px 18px 4px;display:block;}
+.sbi{display:flex;align-items:center;gap:9px;padding:9px 16px;cursor:pointer;color:rgba(255,255,255,.52);font-size:12.5px;transition:background .15s,color .15s;border-left:2px solid transparent;user-select:none;position:relative;}
+.sbi:hover{background:rgba(255,255,255,.05);color:rgba(255,255,255,.85);}
+.sbi.on{background:rgba(248,188,26,.1);color:#fff;border-left-color:var(--gold);}
+.sbi svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.sbi-lbl{flex:1;}
+.sbadge{background:var(--gold);color:var(--navy);font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;min-width:17px;text-align:center;}
+.sbadge.red{background:var(--r);color:#fff;}
+.sb-div{height:1px;background:rgba(255,255,255,.07);margin:6px 14px;}
+.sb-bot{margin-top:auto;padding:6px 0 10px;border-top:1px solid rgba(255,255,255,.07);}
+
+/* ── MAIN ── */
+#main{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;overflow:hidden;}
+
+/* ── TOP BAR ── */
+#topbar{height:52px;flex-shrink:0;background:var(--white);border-bottom:1px solid var(--brd);display:flex;align-items:center;padding:0 22px;gap:12px;}
+.tb-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:500;color:var(--navy);flex:1;}
+.tb-date{font-size:11px;color:var(--text3);white-space:nowrap;}
+.tb-bell{position:relative;cursor:pointer;padding:5px;}
+.tb-bell svg{width:16px;height:16px;fill:none;stroke:var(--text3);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.tb-dot{position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--r);border:1.5px solid #fff;}
+.tb-av{width:30px;height:30px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--navy);}
+.tb-un{font-size:12px;font-weight:600;color:var(--navy);}
+.tb-role{font-size:10px;color:var(--text3);}
+
+/* ── CONTENT ── */
+#content{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:22px 24px;}
+.page{display:none;}
+.page.on{display:block;}
+
+/* ── SHARED ── */
+.sh{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:10px;flex-wrap:wrap;}
+.sh-t{font-family:'Playfair Display',serif;font-size:20px;font-weight:500;color:var(--navy);}
+.sh-s{font-size:11.5px;color:var(--text3);margin-top:2px;}
+.sh-r{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.eyebrow{font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);}
+.rule{width:36px;height:1.5px;background:var(--gold);margin:8px 0;}
+
+/* KPI */
+.krow{display:grid;gap:12px;margin-bottom:20px;}
+.kpi{background:var(--white);border:1px solid var(--brd);padding:16px;border-left:3px solid var(--kc,var(--navy));position:relative;}
+.kpi-l{font-size:.6rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);margin-bottom:5px;}
+.kpi-v{font-family:'Playfair Display',serif;font-size:28px;color:var(--navy);line-height:1;}
+.kpi-s{font-size:11px;color:var(--text3);margin-top:4px;display:flex;gap:5px;align-items:center;}
+.up{color:var(--g);font-weight:600;}
+.dn{color:var(--r);font-weight:600;}
+.kpi-ico{position:absolute;right:12px;top:12px;opacity:.07;}
+.kpi-ico svg{width:28px;height:28px;fill:none;stroke:var(--navy);stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;}
+
+/* TABLE */
+.tw{background:var(--white);border:1px solid var(--brd);margin-bottom:16px;overflow:hidden;}
+.tw table{width:100%;border-collapse:collapse;}
+.tw th{padding:9px 13px;text-align:left;font-size:.58rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);background:var(--off);border-bottom:1px solid var(--brd);white-space:nowrap;}
+.tw td{padding:9px 13px;border-bottom:1px solid var(--brd);font-size:12.5px;vertical-align:middle;}
+.tw tr:last-child td{border-bottom:none;}
+.tw tr:hover td{background:rgba(248,188,26,.03);}
+.tbar{display:flex;gap:7px;padding:9px 12px;border-bottom:1px solid var(--brd);flex-wrap:wrap;align-items:center;}
+.tsrch{display:flex;align-items:center;gap:6px;flex:1;min-width:160px;border:1px solid var(--brd);padding:0 9px;background:var(--off);}
+.tsrch svg{width:12px;height:12px;fill:none;stroke:var(--text3);stroke-width:2;flex-shrink:0;}
+.tsrch input{flex:1;border:none;outline:none;font-family:inherit;font-size:12px;background:transparent;padding:6px 0;}
+.tsel{border:1px solid var(--brd);padding:6px 9px;font-family:inherit;font-size:12px;background:var(--off);outline:none;cursor:pointer;}
+.tfoot{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-top:1px solid var(--brd);font-size:12px;color:var(--text3);}
+
+/* BADGES */
+.bdg{display:inline-flex;align-items:center;padding:2px 8px;border-radius:2px;font-size:10px;font-weight:700;white-space:nowrap;}
+.bg{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;}
+.bb{background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;}
+.bo{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;}
+.br{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;}
+.by{background:rgba(248,188,26,.12);color:#92400e;border:1px solid rgba(248,188,26,.3);}
+.bn2{background:rgba(38,34,98,.08);color:var(--navy);border:1px solid rgba(38,34,98,.15);}
+.bgr{background:#f8fafc;color:#64748b;border:1px solid #e2e8f0;}
+.bp{background:#f5f3ff;color:#5b21b6;border:1px solid #ddd6fe;}
+
+/* BUTTONS */
+.btn{padding:7px 14px;border:none;font-family:inherit;font-size:11.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:opacity .15s;letter-spacing:.02em;}
+.btn:hover{opacity:.84;}
+.btn-navy{background:var(--navy);color:#fff;}
+.btn-gold{background:var(--gold);color:var(--navy);}
+.btn-out{background:var(--white);color:var(--navy);border:1px solid var(--brd);}
+.btn-out:hover{border-color:var(--navy);}
+.btn-red{background:var(--white);color:var(--r);border:1px solid #fecaca;}
+.btn-sm{padding:4px 10px;font-size:11px;}
+.btn-xs{padding:3px 8px;font-size:10.5px;}
+
+/* FORMS */
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:13px;}
+.fg label{font-size:.6rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);}
+.fg label .req{color:var(--r);margin-left:2px;}
+.fi{border:1px solid var(--brd);padding:8px 10px;font-family:inherit;font-size:13px;background:var(--off);outline:none;transition:border-color .18s;width:100%;}
+.fi:focus{border-color:var(--navy);}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+
+/* MODALS */
+.mov{display:none;position:fixed;inset:0;z-index:1000;background:rgba(38,34,98,.6);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:16px;}
+.mov.open{display:flex;}
+.modal{background:var(--white);width:100%;max-width:640px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 64px rgba(0,0,0,.25);}
+.modal-lg{max-width:860px;}
+.mhd{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--brd);background:var(--navy);position:sticky;top:0;z-index:5;}
+.mhd-t{font-family:'Playfair Display',serif;font-size:17px;color:#fff;font-weight:400;}
+.mx{background:none;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.6);width:28px;height:28px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;}
+.mx:hover{border-color:var(--gold);color:var(--gold);}
+.mbody{padding:18px 20px;}
+.mfoot{padding:13px 20px;border-top:1px solid var(--brd);display:flex;justify-content:flex-end;gap:8px;background:var(--off);position:sticky;bottom:0;}
+
+/* TOAST */
+#toastC{position:fixed;bottom:18px;right:18px;z-index:9999;display:flex;flex-direction:column;gap:7px;}
+.toast{background:var(--navy);color:#fff;padding:10px 15px;font-size:12px;border-left:3px solid var(--gold);box-shadow:0 4px 18px rgba(0,0,0,.2);min-width:220px;max-width:300px;animation:tin .25s ease;}
+.toast.ok{border-left-color:var(--g);}
+.toast.err{border-left-color:var(--r);}
+@keyframes tin{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--brd);padding:18px 20px;margin-bottom:14px;}
+.card-title{font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;}
+
+/* ── PROFILE AVATAR ── */
+.av{width:32px;height:32px;border-radius:50%;background:rgba(38,34,98,.1);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:12px;color:var(--navy);flex-shrink:0;font-weight:500;}
+
+/* ── ATTENDANCE CALENDAR ── */
+.att-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.att-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;border-radius:3px;cursor:default;}
+.att-day.present{background:#f0fdf4;color:#166534;}
+.att-day.absent{background:#fef2f2;color:#dc2626;}
+.att-day.holiday{background:rgba(248,188,26,.12);color:#92400e;}
+.att-day.weekend{background:var(--off);color:var(--text3);}
+.att-day.future{background:var(--off);color:#ccc;}
+.att-day.today{background:var(--navy);color:#fff;}
+.att-cal-hd{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px;}
+.att-cal-hd span{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);text-align:center;}
+.att-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11px;color:var(--text3);}
+.att-leg{display:flex;align-items:center;gap:5px;}
+.att-leg-dot{width:10px;height:10px;border-radius:2px;}
+
+/* ── LEAVE REQUEST CARD ── */
+.leave-card{border:1px solid var(--brd);padding:14px 16px;margin-bottom:10px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;background:var(--white);}
+.leave-type{font-size:.6rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:3px;}
+.leave-dates{font-size:13px;font-weight:600;color:var(--navy);}
+.leave-days{font-size:11px;color:var(--text3);margin-top:2px;}
+.leave-actions{display:flex;gap:6px;}
+
+/* ── PAYSLIP ── */
+.payslip{background:var(--white);border:1px solid var(--brd);padding:0;}
+.payslip-head{background:var(--navy);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;}
+.payslip-head h3{font-family:'Playfair Display',serif;font-size:17px;color:#fff;font-weight:400;}
+.payslip-head span{font-size:11px;color:rgba(255,255,255,.45);}
+.payslip-body{padding:20px 24px;}
+.pay-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--brd);font-size:12.5px;}
+.pay-row:last-child{border-bottom:none;}
+.pay-row.total{font-weight:700;color:var(--navy);font-size:13px;border-top:2px solid var(--brd);margin-top:4px;padding-top:12px;}
+.pay-row .green{color:var(--g);font-weight:600;}
+.pay-row .red{color:var(--r);font-weight:600;}
+
+/* ── RECRUITMENT KANBAN ── */
+.kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:start;}
+.kanban-col{background:var(--off);border:1px solid var(--brd);padding:0;overflow:hidden;}
+.kanban-col-hd{padding:10px 14px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;}
+.kanban-col-title{font-size:.6rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--text2);}
+.kanban-cnt{font-size:.65rem;font-weight:700;padding:1px 7px;border-radius:8px;background:var(--brd);color:var(--text3);}
+.kanban-items{padding:10px;display:flex;flex-direction:column;gap:7px;min-height:80px;}
+.k-card{background:var(--white);border:1px solid var(--brd);padding:11px 12px;cursor:grab;transition:box-shadow .18s;position:relative;}
+.k-card:hover{box-shadow:0 3px 14px rgba(0,0,0,.1);}
+.k-card-name{font-size:12.5px;font-weight:600;color:var(--navy);margin-bottom:3px;}
+.k-card-role{font-size:11px;color:var(--text3);margin-bottom:6px;}
+.k-card-meta{display:flex;gap:6px;flex-wrap:wrap;}
+.k-card-date{font-size:10px;color:var(--text3);margin-top:5px;}
+.k-card-strip{position:absolute;left:0;top:0;bottom:0;width:3px;}
+
+/* ── JOB LISTING CARD (public-facing preview) ── */
+.job-pub-card{background:var(--white);border:1px solid var(--brd);padding:0;margin-bottom:10px;display:grid;grid-template-columns:5px 1fr auto;transition:box-shadow .18s;}
+.job-pub-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.08);}
+.jpc-strip{width:5px;}
+.jpc-body{padding:16px 20px;}
+.jpc-dept{font-size:.58rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:5px;}
+.jpc-title{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--navy);margin-bottom:5px;}
+.jpc-pills{display:flex;gap:7px;flex-wrap:wrap;}
+.jpc-pill{font-size:.6rem;font-weight:500;padding:2px 8px;background:var(--off);border:1px solid var(--brd);color:var(--text3);}
+.jpc-right{padding:16px 18px;border-left:1px solid var(--brd);display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:8px;min-width:150px;}
+.jpc-salary{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--navy);}
+.jpc-apps{font-size:.65rem;color:var(--text3);}
+
+/* ── STAFF REQUISITION ── */
+.req-card{background:var(--white);border:1px solid var(--brd);padding:16px 18px;margin-bottom:10px;}
+.req-card-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;}
+.req-title{font-size:13.5px;font-weight:600;color:var(--navy);}
+.req-dept{font-size:11px;color:var(--text3);margin-top:2px;}
+.req-meta{display:flex;gap:16px;font-size:11.5px;color:var(--text3);flex-wrap:wrap;}
+.req-meta span strong{color:var(--navy);}
+
+/* ── EMPLOYEE CARD ── */
+.emp-card{background:var(--white);border:1px solid var(--brd);padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:8px;}
+.emp-av-lg{width:44px;height:44px;border-radius:50%;background:rgba(38,34,98,.1);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:16px;color:var(--navy);flex-shrink:0;}
+.emp-name{font-size:13.5px;font-weight:600;color:var(--navy);}
+.emp-role{font-size:11.5px;color:var(--text3);}
+.emp-dept{font-size:11px;color:var(--text3);margin-top:2px;}
+.emp-meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:5px;}
+.emp-meta span{font-size:11px;color:var(--text3);}
+
+/* ── NOTICE BOARD ── */
+.notice-card{background:var(--white);border:1px solid var(--brd);border-left:3px solid var(--gold);padding:14px 16px;margin-bottom:10px;}
+.notice-title{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:4px;}
+.notice-body{font-size:12px;color:var(--text2);line-height:1.7;}
+.notice-meta{font-size:11px;color:var(--text3);margin-top:6px;display:flex;gap:12px;}
+
+/* ── UPCOMING WIDGET ── */
+.upcoming-item{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--brd);}
+.upcoming-item:last-child{border-bottom:none;}
+.upcoming-date{width:38px;height:38px;background:rgba(38,34,98,.08);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;}
+.upcoming-day{font-family:'Playfair Display',serif;font-size:16px;color:var(--navy);line-height:1;}
+.upcoming-mo{font-size:.55rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);}
+.upcoming-label{font-size:12.5px;font-weight:500;color:var(--navy);}
+.upcoming-sub{font-size:11px;color:var(--text3);}
+
+/* ── APPLICANT DETAIL ── */
+.apd-grid{display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start;}
+.apd-main{background:var(--white);border:1px solid var(--brd);}
+.apd-head{padding:18px 20px;border-bottom:1px solid var(--brd);background:var(--off);}
+.apd-name{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--navy);}
+.apd-role{font-size:12px;color:var(--text3);margin-top:3px;}
+.apd-body{padding:18px 20px;}
+.apd-sec-t{font-size:.58rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.apd-sidebar{position:sticky;top:0;}
+.apd-info{background:var(--white);border:1px solid var(--brd);}
+.apd-row{display:flex;justify-content:space-between;padding:9px 14px;border-bottom:1px solid var(--brd);font-size:12px;}
+.apd-row:last-child{border-bottom:none;}
+.apd-k{color:var(--text3);font-weight:500;}
+.apd-v{color:var(--navy);font-weight:600;text-align:right;}
+.rating-stars{display:flex;gap:3px;}
+.star{font-size:16px;cursor:pointer;color:var(--brd);transition:color .15s;}
+.star.on{color:var(--gold);}
+
+/* ── PROGRESS STEPS ── */
+.steps{display:flex;align-items:center;margin-bottom:20px;}
+.step{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;}
+.step:not(:last-child)::after{content:'';position:absolute;top:12px;left:50%;width:100%;height:2px;background:var(--brd);}
+.step.done:not(:last-child)::after,.step.on:not(:last-child)::after{background:var(--gold);}
+.step-dot{width:24px;height:24px;border-radius:50%;border:2px solid var(--brd);background:var(--white);position:relative;z-index:1;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
+.step.done .step-dot{background:var(--gold);border-color:var(--gold);color:var(--navy);}
+.step.on .step-dot{background:var(--white);border-color:var(--gold);box-shadow:0 0 0 3px rgba(248,188,26,.2);}
+.step-lbl{font-size:.58rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-top:5px;text-align:center;}
+.step.done .step-lbl,.step.on .step-lbl{color:var(--navy);}
+
+/* CHART BAR (simple CSS) */
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:100px;padding:10px 0 0;}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.bar{width:100%;background:rgba(38,34,98,.12);position:relative;border-radius:2px 2px 0 0;transition:background .2s;}
+.bar:hover{background:var(--gold);}
+.bar-val{font-size:.6rem;font-weight:700;color:var(--text3);}
+.bar-lbl{font-size:.58rem;color:var(--text3);text-align:center;}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- SIDEBAR -->
+<div id="sb">
+  <div class="sbh">
+    <div class="sbh-ico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+    <div><span class="sbh-name">HALA BISSAU</span><span class="sbh-sub">HR Portal</span></div>
+  </div>
+
+  <span class="sb-sec-lbl">Overview</span>
+  <div class="sbi on" id="sbi-hrmdash" onclick="nav('hrmdash',this)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="sbi-lbl">Dashboard</span></div>
+  <div class="sbi" id="sbi-noticeboard" onclick="nav('noticeboard',this)"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg><span class="sbi-lbl">Notice Board</span><span class="sbadge">2</span></div>
+
+  <span class="sb-sec-lbl">Employees</span>
+  <div class="sbi" id="sbi-employees" onclick="nav('employees',this)"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg><span class="sbi-lbl">All Employees</span></div>
+  <div class="sbi" id="sbi-attendance" onclick="nav('attendance',this)"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M9 16l2 2 4-4"/></svg><span class="sbi-lbl">Attendance</span></div>
+  <div class="sbi" id="sbi-leaves" onclick="nav('leaves',this)"><svg viewBox="0 0 24 24"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg><span class="sbi-lbl">Leave Management</span><span class="sbadge">4</span></div>
+  <div class="sbi" id="sbi-payroll" onclick="nav('payroll',this)"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg><span class="sbi-lbl">Payroll &amp; Payslips</span></div>
+  <div class="sbi" id="sbi-awards" onclick="nav('awards',this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg><span class="sbi-lbl">Awards &amp; Recognition</span></div>
+  <div class="sbi" id="sbi-expenses" onclick="nav('expenses',this)"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg><span class="sbi-lbl">Expense Claims</span><span class="sbadge red">3</span></div>
+  <div class="sbi" id="sbi-holidays" onclick="nav('holidays',this)"><svg viewBox="0 0 24 24"><path d="M8 6v6m0 0l-4 4m4-4l4 4m4-10v6m0 0l-4 4m4-4l4 4"/></svg><span class="sbi-lbl">Holidays</span></div>
+
+  <span class="sb-sec-lbl">Recruitment</span>
+  <div class="sbi" id="sbi-recdash" onclick="nav('recdash',this)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="sbi-lbl">Recruitment Dashboard</span></div>
+  <div class="sbi" id="sbi-applicants" onclick="nav('applicants',this)"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span class="sbi-lbl">Applicants</span><span class="sbadge">10</span></div>
+  <div class="sbi" id="sbi-shortlist" onclick="nav('shortlist',this)"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg><span class="sbi-lbl">Shortlisting Panel</span><span class="sbadge">2</span></div>
+  <div class="sbi" id="sbi-joblistings" onclick="nav('joblistings',this)"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg><span class="sbi-lbl">Job Listings</span><span class="sbadge">12</span></div>
+  <div class="sbi" id="sbi-requisitions" onclick="nav('requisitions',this)"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span class="sbi-lbl">Staff Requisitions</span></div>
+  <div class="sbi" id="sbi-postjob" onclick="nav('postjob',this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg><span class="sbi-lbl">Post New Job</span></div>
+
+  <div class="sb-div"></div>
+  <div class="sb-bot">
+    <div class="sbi" onclick="window.open('hala-cpanel.html','_blank')" style="color:rgba(255,255,255,.38)"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg><span class="sbi-lbl">Hotel cPanel</span></div>
+    <div class="sbi" onclick="window.open('hala-careers.html','_blank')" style="color:rgba(255,255,255,.38)"><svg viewBox="0 0 24 24"><path d="M21 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h6"/><path d="M16 2h6v6"/><path d="M11 13L22 2"/></svg><span class="sbi-lbl">Careers Page</span></div>
+    <div class="sbi" onclick="doLogout()" style="color:rgba(255,255,255,.3)"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg><span class="sbi-lbl">Logout</span></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <div id="topbar">
+    <div class="tb-title" id="tbTitle">HR Dashboard</div>
+    <div class="tb-date" id="tbDate"></div>
+    <div class="tb-bell"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg><div class="tb-dot"></div></div>
+    <div style="display:flex;align-items:center;gap:8px;"><div class="tb-av">HR</div><div><div class="tb-un">HR Manager</div><div class="tb-role">Hala Bissau Hotel</div></div></div>
+  </div>
+  <div id="content">
+
+<!-- ══ HR DASHBOARD ══ -->
+<div class="page on" id="pg-hrmdash">
+  <div class="sh"><div><div class="sh-t">HR Dashboard</div><div class="sh-s">Welcome back — here's your people overview</div></div><button class="btn btn-gold" onclick="nav('postjob',document.getElementById('sbi-postjob'))">+ Post New Job</button></div>
+  <div class="krow" style="grid-template-columns:repeat(5,1fr)">
+    <div class="kpi" style="--kc:#262262"><div class="kpi-ico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="kpi-l">Total Employees</div><div class="kpi-v">47</div><div class="kpi-s"><span class="up">↑3</span><span>this quarter</span></div></div>
+    <div class="kpi" style="--kc:var(--g)"><div class="kpi-l">Present Today</div><div class="kpi-v">42</div><div class="kpi-s"><span style="color:var(--text3)">89.4% attendance</span></div></div>
+    <div class="kpi" style="--kc:var(--o)"><div class="kpi-l">On Leave Today</div><div class="kpi-v">5</div><div class="kpi-s"><span class="btn-text" style="font-size:10px;cursor:pointer;" onclick="nav('leaves',document.getElementById('sbi-leaves'))">View requests →</span></div></div>
+    <div class="kpi" style="--kc:var(--b)"><div class="kpi-l">Open Positions</div><div class="kpi-v">12</div><div class="kpi-s"><span style="color:var(--text3)">across 8 depts</span></div></div>
+    <div class="kpi" style="--kc:var(--gold)"><div class="kpi-l">New Applicants</div><div class="kpi-v">10</div><div class="kpi-s"><span class="up">↑4</span><span>this week</span></div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 320px;gap:16px;">
+    <!-- Attendance bar chart -->
+    <div class="tw" style="margin-bottom:0;padding:16px 18px;">
+      <div class="card-title">Attendance This Week</div>
+      <div class="bar-chart" id="attChart"></div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--text3);padding:0 4px;" id="attChartLbls"></div>
+    </div>
+    <!-- Leave requests -->
+    <div class="tw" style="margin-bottom:0;padding:0;">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;"><span style="font-size:.6rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);">Pending Leaves</span><button class="btn btn-xs btn-out" onclick="nav('leaves',document.getElementById('sbi-leaves'))">View All</button></div>
+      <div style="padding:10px 14px;" id="dashLeaveList"></div>
+    </div>
+    <!-- Upcoming birthdays / holidays -->
+    <div class="tw" style="margin-bottom:0;padding:0;">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--brd);font-size:.6rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);">Upcoming This Month</div>
+      <div style="padding:10px 14px;" id="dashUpcoming"></div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+    <div class="tw" style="margin-bottom:0;padding:0;">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;"><span style="font-size:.6rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);">Latest Applicants</span><button class="btn btn-xs btn-out" onclick="nav('applicants',document.getElementById('sbi-applicants'))">View All</button></div>
+      <div id="dashApplicants"></div>
+    </div>
+    <div class="tw" style="margin-bottom:0;padding:0;">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;"><span style="font-size:.6rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);">Pending Expenses</span><button class="btn btn-xs btn-red" onclick="nav('expenses',document.getElementById('sbi-expenses'))">3 Awaiting</button></div>
+      <div id="dashExpenses"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ NOTICE BOARD ══ -->
+<div class="page" id="pg-noticeboard">
+  <div class="sh"><div><div class="sh-t">Notice Board</div><div class="sh-s">Company-wide announcements visible to all staff</div></div><button class="btn btn-gold" onclick="openM('mNewNotice')">+ Post Notice</button></div>
+  <div id="noticeList"></div>
+</div>
+
+<!-- ══ ALL EMPLOYEES ══ -->
+<div class="page" id="pg-employees">
+  <div class="sh"><div><div class="sh-t">All Employees</div><div class="sh-s">47 staff members across 8 departments</div></div><div class="sh-r"><button class="btn btn-out" onclick="toast('Exporting…','info')">Export CSV</button><button class="btn btn-gold" onclick="openM('mNewEmp')">+ Add Employee</button></div></div>
+  <div class="tw">
+    <div class="tbar">
+      <div class="tsrch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><input placeholder="Search name, role, department…" oninput="srchEmp(this.value)"></div>
+      <select class="tsel" onchange="filterEmpDept(this.value)"><option value="">All Departments</option><option>Food &amp; Beverage</option><option>Front Office</option><option>Rooms</option><option>Sales</option><option>Engineering</option><option>Finance</option><option>HR</option><option>Security</option></select>
+      <select class="tsel"><option>All Status</option><option>Active</option><option>On Leave</option><option>Probation</option></select>
+    </div>
+    <table><thead><tr><th>Employee</th><th>Department</th><th>Role</th><th>Type</th><th>Joined</th><th>Status</th><th>Actions</th></tr></thead><tbody id="empTbl"></tbody></table>
+    <div class="tfoot"><span id="empInfo"></span></div>
+  </div>
+</div>
+
+<!-- ══ ATTENDANCE ══ -->
+<div class="page" id="pg-attendance">
+  <div class="sh"><div><div class="sh-t">Attendance</div><div class="sh-s">Mark and review staff attendance</div></div><div class="sh-r"><select class="tsel" id="attMonthSel" onchange="buildAttCalendar()"><option>June 2026</option><option>May 2026</option><option>April 2026</option></select><button class="btn btn-gold" onclick="openM('mMarkAtt')">Mark Today's Attendance</button></div></div>
+  <div style="display:grid;grid-template-columns:1fr 280px;gap:16px;align-items:start;">
+    <div class="tw" style="margin-bottom:0;padding:16px 18px;">
+      <div class="card-title" id="attCalTitle">June 2026 — Attendance Calendar</div>
+      <div class="att-cal-hd"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+      <div class="att-cal" id="attCal"></div>
+      <div class="att-legend">
+        <div class="att-leg"><div class="att-leg-dot" style="background:#f0fdf4;border:1px solid #bbf7d0;"></div>Present</div>
+        <div class="att-leg"><div class="att-leg-dot" style="background:#fef2f2;border:1px solid #fecaca;"></div>Absent</div>
+        <div class="att-leg"><div class="att-leg-dot" style="background:rgba(248,188,26,.12);border:1px solid rgba(248,188,26,.3);"></div>Holiday</div>
+        <div class="att-leg"><div class="att-leg-dot" style="background:var(--off);border:1px solid var(--brd);"></div>Weekend</div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:12px;">
+        <div class="card-title">This Month Summary</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="text-align:center;padding:12px;background:var(--off);border:1px solid var(--brd);"><div style="font-family:'Playfair Display',serif;font-size:26px;color:var(--g);">89%</div><div style="font-size:10px;color:var(--text3);margin-top:3px;">Avg Attendance</div></div>
+          <div style="text-align:center;padding:12px;background:var(--off);border:1px solid var(--brd);"><div style="font-family:'Playfair Display',serif;font-size:26px;color:var(--r);">11%</div><div style="font-size:10px;color:var(--text3);margin-top:3px;">Avg Absence</div></div>
+        </div>
+      </div>
+      <div class="tw" style="margin-bottom:0;padding:0;">
+        <div style="padding:10px 14px;border-bottom:1px solid var(--brd);font-size:.58rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);">Today's Absent Staff</div>
+        <div id="absentList" style="padding:10px 14px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LEAVE MANAGEMENT ══ -->
+<div class="page" id="pg-leaves">
+  <div class="sh"><div><div class="sh-t">Leave Management</div><div class="sh-s">Approve or decline staff leave requests</div></div><button class="btn btn-gold" onclick="openM('mNewLeave')">+ Apply for Leave</button></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;">
+    <div class="kpi" style="--kc:var(--o)"><div class="kpi-l">Pending Requests</div><div class="kpi-v">4</div></div>
+    <div class="kpi" style="--kc:var(--g)"><div class="kpi-l">Approved This Month</div><div class="kpi-v">9</div></div>
+    <div class="kpi" style="--kc:var(--r)"><div class="kpi-l">Declined</div><div class="kpi-v">2</div></div>
+    <div class="kpi" style="--kc:var(--b)"><div class="kpi-l">Staff On Leave Now</div><div class="kpi-v">5</div></div>
+  </div>
+  <div class="tw" style="margin-bottom:16px;">
+    <div style="padding:10px 14px;border-bottom:1px solid var(--brd);font-size:.6rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);background:var(--off);">Pending Approval</div>
+    <div id="leaveRequests"></div>
+  </div>
+  <div class="tw">
+    <div style="padding:10px 14px;border-bottom:1px solid var(--brd);font-size:.6rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);background:var(--off);">Leave History</div>
+    <table><thead><tr><th>Employee</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th></tr></thead><tbody id="leaveTbl"></tbody></table>
+  </div>
+</div>
+
+<!-- ══ PAYROLL ══ -->
+<div class="page" id="pg-payroll">
+  <div class="sh"><div><div class="sh-t">Payroll &amp; Payslips</div><div class="sh-s">Generate and email payslips for all staff</div></div><div class="sh-r"><select class="tsel"><option>June 2026</option><option>May 2026</option><option>April 2026</option></select><button class="btn btn-gold" onclick="genAllPayslips()">Generate &amp; Email All Payslips</button></div></div>
+  <div class="tw">
+    <div class="tbar">
+      <div class="tsrch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><input placeholder="Search employee…"></div>
+      <select class="tsel"><option>All Departments</option><option>Food &amp; Beverage</option><option>Front Office</option><option>Rooms</option><option>Sales</option></select>
+    </div>
+    <table><thead><tr><th>Employee</th><th>Department</th><th>Base Salary</th><th>Allowances</th><th>Deductions</th><th>Net Pay (XOF)</th><th>Status</th><th>Actions</th></tr></thead><tbody id="payrollTbl"></tbody></table>
+  </div>
+</div>
+
+<!-- ══ AWARDS ══ -->
+<div class="page" id="pg-awards">
+  <div class="sh"><div><div class="sh-t">Awards &amp; Recognition</div><div class="sh-s">Celebrate your team's achievements</div></div><button class="btn btn-gold" onclick="openM('mNewAward')">+ Give Award</button></div>
+  <div class="tw" style="margin-bottom:16px;">
+    <table><thead><tr><th>Award</th><th>Employee</th><th>Department</th><th>Given By</th><th>Date</th><th>Note</th></tr></thead><tbody id="awardsTbl"></tbody></table>
+  </div>
+</div>
+
+<!-- ══ EXPENSES ══ -->
+<div class="page" id="pg-expenses">
+  <div class="sh"><div><div class="sh-t">Expense Claims</div><div class="sh-s">Review and approve staff expense submissions</div></div><button class="btn btn-gold" onclick="openM('mNewExpense')">+ Submit Expense</button></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;">
+    <div class="kpi" style="--kc:var(--o)"><div class="kpi-l">Pending Approval</div><div class="kpi-v">3</div></div>
+    <div class="kpi" style="--kc:var(--g)"><div class="kpi-l">Approved This Month</div><div class="kpi-v">XOF 1.2M</div></div>
+    <div class="kpi" style="--kc:var(--navy)"><div class="kpi-l">Total This Year</div><div class="kpi-v">XOF 8.4M</div></div>
+  </div>
+  <div class="tw"><table><thead><tr><th>Employee</th><th>Category</th><th>Description</th><th>Amount (XOF)</th><th>Date</th><th>Receipt</th><th>Status</th><th>Actions</th></tr></thead><tbody id="expTbl"></tbody></table></div>
+</div>
+
+<!-- ══ HOLIDAYS ══ -->
+<div class="page" id="pg-holidays">
+  <div class="sh"><div><div class="sh-t">Holidays</div><div class="sh-s">Guinea-Bissau public holidays &amp; hotel closures 2026</div></div><button class="btn btn-gold" onclick="openM('mNewHoliday')">+ Add Holiday</button></div>
+  <div class="tw"><table><thead><tr><th>Date</th><th>Day</th><th>Holiday Name</th><th>Type</th><th>Actions</th></tr></thead><tbody id="holidayTbl"></tbody></table></div>
+</div>
+
+<!-- ══ RECRUITMENT DASHBOARD ══ -->
+<div class="page" id="pg-recdash">
+  <div class="sh"><div><div class="sh-t">Recruitment Dashboard</div><div class="sh-s">End-to-end hiring pipeline for Hala Bissau</div></div><button class="btn btn-gold" onclick="nav('postjob',document.getElementById('sbi-postjob'))">+ Post New Job</button></div>
+  <div class="krow" style="grid-template-columns:repeat(5,1fr)">
+    <div class="kpi" style="--kc:var(--navy)"><div class="kpi-l">Active Job Listings</div><div class="kpi-v">12</div></div>
+    <div class="kpi" style="--kc:var(--b)"><div class="kpi-l">Total Applicants</div><div class="kpi-v">10</div><div class="kpi-s"><span class="up">↑4</span><span>this week</span></div></div>
+    <div class="kpi" style="--kc:var(--o)"><div class="kpi-l">Under Review</div><div class="kpi-v">5</div></div>
+    <div class="kpi" style="--kc:var(--p)"><div class="kpi-l">Shortlisted</div><div class="kpi-v">2</div></div>
+    <div class="kpi" style="--kc:var(--g)"><div class="kpi-l">Offers Made</div><div class="kpi-v">1</div></div>
+  </div>
+  <!-- Pipeline kanban -->
+  <div class="sh" style="margin-bottom:12px;"><div class="sh-t" style="font-size:15px;">Hiring Pipeline</div></div>
+  <div class="kanban" id="kanbanBoard"></div>
+</div>
+
+<!-- ══ APPLICANTS ══ -->
+<div class="page" id="pg-applicants">
+  <div class="sh"><div><div class="sh-t">Applicants</div><div class="sh-s">All applications from the Careers Portal</div></div><button class="btn btn-out" onclick="toast('Exporting…','info')">Export CSV</button></div>
+  <div class="tw">
+    <div class="tbar">
+      <div class="tsrch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><input placeholder="Search applicant, role, department…" oninput="srchApplicants(this.value)"></div>
+      <select class="tsel" onchange="filterApplicants('dept',this.value)"><option value="">All Departments</option><option>Food &amp; Beverage</option><option>Front Office</option><option>Rooms</option><option>Sales</option><option>Engineering</option><option>Finance</option><option>HR</option><option>Security</option></select>
+      <select class="tsel" onchange="filterApplicants('status',this.value)"><option value="">All Status</option><option>Applied</option><option>Under Review</option><option>Shortlisted</option><option>Interview</option><option>Offered</option><option>Rejected</option></select>
+    </div>
+    <table><thead><tr><th>Applicant</th><th>Applied For</th><th>Department</th><th>Applied</th><th>Experience</th><th>Status</th><th>Actions</th></tr></thead><tbody id="applicantsTbl"></tbody></table>
+    <div class="tfoot"><span id="applicantsInfo"></span></div>
+  </div>
+  <div id="apdWrap" style="display:none;margin-top:20px;"></div>
+</div>
+
+<!-- ══ SHORTLISTING PANEL ══ -->
+<div class="page" id="pg-shortlist">
+  <div class="sh"><div><div class="sh-t">Shortlisting Panel</div><div class="sh-s">Rate and shortlist candidates for interview</div></div></div>
+  <div id="shortlistCards"></div>
+</div>
+
+<!-- ══ JOB LISTINGS ══ -->
+<div class="page" id="pg-joblistings">
+  <div class="sh"><div><div class="sh-t">Job Listings</div><div class="sh-s">All active positions — live on the Careers page</div></div><div class="sh-r"><a href="hala-careers.html" target="_blank" class="btn btn-out">View Careers Page ↗</a><button class="btn btn-gold" onclick="nav('postjob',document.getElementById('sbi-postjob'))">+ Post New Job</button></div></div>
+  <div id="jobListingsWrap"></div>
+</div>
+
+<!-- ══ STAFF REQUISITIONS ══ -->
+<div class="page" id="pg-requisitions">
+  <div class="sh"><div><div class="sh-t">Staff Requisitions</div><div class="sh-s">Department heads submit hiring requests here</div></div><button class="btn btn-gold" onclick="openM('mNewReq')">+ New Requisition</button></div>
+  <div id="reqList"></div>
+</div>
+
+<!-- ══ POST NEW JOB ══ -->
+<div class="page" id="pg-postjob">
+  <div class="sh"><div><div class="sh-t">Post New Job</div><div class="sh-s">Create a new vacancy — published instantly to the Careers page</div></div></div>
+  <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start;">
+    <div style="background:var(--white);border:1px solid var(--brd);padding:24px;">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;">Job Details</div>
+      <div class="fg3"><div class="fg" style="margin:0"><label>Job Title <span class="req">*</span></label><input class="fi" id="pj_title" placeholder="e.g. Front Office Manager"></div><div class="fg" style="margin:0"><label>Department <span class="req">*</span></label><select class="fi" id="pj_dept"><option>Food &amp; Beverage</option><option>Front Office</option><option>Rooms</option><option>Sales</option><option>Engineering</option><option>Finance</option><option>HR</option><option>Security</option></select></div><div class="fg" style="margin:0"><label>Contract Type</label><select class="fi" id="pj_type"><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Internship</option></select></div></div>
+      <div class="fg3" style="margin-top:12px;"><div class="fg" style="margin:0"><label>Experience Required</label><select class="fi" id="pj_exp"><option>Entry Level</option><option>1–3 years</option><option>3–5 years</option><option>5+ years</option></select></div><div class="fg" style="margin:0"><label>Salary (XOF/month) <span class="req">*</span></label><input class="fi" id="pj_salary" placeholder="e.g. 300,000–450,000"></div><div class="fg" style="margin:0"><label>Application Deadline</label><input class="fi" type="date" id="pj_deadline"></div></div>
+      <div class="fg" style="margin-top:16px;"><label>Position Summary <span class="req">*</span></label><textarea class="fi" id="pj_desc" rows="5" placeholder="Describe the role, responsibilities, and what the candidate will be doing day to day…"></textarea></div>
+      <div class="fg"><label>Requirements (one per line)</label><textarea class="fi" id="pj_req" rows="4" placeholder="e.g.&#10;3+ years hotel experience&#10;Fluent Portuguese and English"></textarea></div>
+      <div class="fg"><label>Benefits (one per line)</label><textarea class="fi" id="pj_ben" rows="3" placeholder="e.g.&#10;XOF 300,000–450,000/month&#10;Meals on duty"></textarea></div>
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button class="btn btn-gold" style="flex:1;padding:12px;justify-content:center;" onclick="publishJob()">Publish to Careers Page</button>
+        <button class="btn btn-out" onclick="toast('Saved as draft','info')">Save Draft</button>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-title">Publishing Checklist</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--text2);">
+          <div style="display:flex;gap:8px;align-items:center;"><span style="color:var(--g);font-size:14px;">✓</span> Careers page link auto-updates</div>
+          <div style="display:flex;gap:8px;align-items:center;"><span style="color:var(--g);font-size:14px;">✓</span> Talent pool notified by email</div>
+          <div style="display:flex;gap:8px;align-items:center;"><span style="color:var(--g);font-size:14px;">✓</span> Applications tracked in portal</div>
+          <div style="display:flex;gap:8px;align-items:center;"><span style="color:var(--g);font-size:14px;">✓</span> Marriott-style job detail view</div>
+          <div style="display:flex;gap:8px;align-items:center;"><span style="color:var(--g);font-size:14px;">✓</span> Share links auto-generated</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <div class="card-title">Active Job Count by Dept</div>
+        <div id="deptJobCount" style="display:flex;flex-direction:column;gap:6px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+<!-- MODALS -->
+<div class="mov" id="mNewNotice"><div class="modal"><div class="mhd"><div class="mhd-t">Post Notice</div><button class="mx" onclick="closeM('mNewNotice')">✕</button></div><div class="mbody"><div class="fg"><label>Title <span class="req">*</span></label><input class="fi" id="nn_t" placeholder="Notice title"></div><div class="fg"><label>Message <span class="req">*</span></label><textarea class="fi" id="nn_b" rows="4" placeholder="Notice body…"></textarea></div><div class="fg2"><div class="fg" style="margin:0"><label>Priority</label><select class="fi" id="nn_p"><option>Normal</option><option>Important</option><option>Urgent</option></select></div><div class="fg" style="margin:0"><label>Visible To</label><select class="fi"><option>All Staff</option><option>Managers Only</option><option>Department</option></select></div></div></div><div class="mfoot"><button class="btn btn-out" onclick="closeM('mNewNotice')">Cancel</button><button class="btn btn-gold" onclick="saveNotice()">Post Notice</button></div></div></div>
+
+<div class="mov" id="mNewEmp"><div class="modal"><div class="mhd"><div class="mhd-t">Add Employee</div><button class="mx" onclick="closeM('mNewEmp')">✕</button></div><div class="mbody"><div class="fg2"><div class="fg" style="margin:0"><label>First Name <span class="req">*</span></label><input class="fi" id="ne_fn" placeholder="First name"></div><div class="fg" style="margin:0"><label>Last Name <span class="req">*</span></label><input class="fi" id="ne_ln"></div></div><div class="fg2" style="margin-top:12px;"><div class="fg" style="margin:0"><label>Email <span class="req">*</span></label><input class="fi" type="email" id="ne_em"></div><div class="fg" style="margin:0"><label>Phone</label><input class="fi" id="ne_ph"></div></div><div class="fg2" style="margin-top:12px;"><div class="fg" style="margin:0"><label>Department <span class="req">*</span></label><select class="fi" id="ne_dept"><option>Food &amp; Beverage</option><option>Front Office</option><option>Rooms</option><option>Sales</option><option>Engineering</option><option>Finance</option><option>HR</option><option>Security</option></select></div><div class="fg" style="margin:0"><label>Role / Job Title <span class="req">*</span></label><input class="fi" id="ne_role"></div></div><div class="fg2" style="margin-top:12px;"><div class="fg" style="margin:0"><label>Contract Type</label><select class="fi"><option>Full-time</option><option>Part-time</option><option>Contract</option></select></div><div class="fg" style="margin:0"><label>Start Date</label><input class="fi" type="date" id="ne_start"></div></div><div class="fg" style="margin-top:12px;"><label>Base Salary (XOF/month)</label><input class="fi" type="number" id="ne_salary" placeholder="e.g. 320000"></div></div><div class="mfoot"><button class="btn btn-out" onclick="closeM('mNewEmp')">Cancel</button><button class="btn btn-gold" onclick="saveEmp()">Add Employee</button></div></div></div>
+
+<div class="mov" id="mMarkAtt"><div class="modal"><div class="mhd"><div class="mhd-t">Mark Attendance</div><button class="mx" onclick="closeM('mMarkAtt')">✕</button></div><div class="mbody"><p style="font-size:12.5px;color:var(--text2);margin-bottom:16px;line-height:1.7;">Select absent employees. All others will be marked <strong>Present</strong>.</p><div id="markAttList"></div></div><div class="mfoot"><button class="btn btn-out" onclick="closeM('mMarkAtt')">Cancel</button><button class="btn btn-gold" onclick="saveAtt()">Mark Attendance</button></div></div></div>
+
+<div class="mov" id="mNewLeave"><div class="modal"><div class="mhd"><div class="mhd-t">Apply for Leave</div><button class="mx" onclick="closeM('mNewLeave')">✕</button></div><div class="mbody"><div class="fg"><label>Employee <span class="req">*</span></label><select class="fi" id="nl_emp"><option>Maria Santos</option><option>Jean Dubois</option><option>Fatima Camará</option><option>João Engineer</option></select></div><div class="fg"><label>Leave Type <span class="req">*</span></label><select class="fi" id="nl_type"><option>Annual Leave</option><option>Sick Leave</option><option>Maternity / Paternity</option><option>Emergency Leave</option><option>Unpaid Leave</option></select></div><div class="fg2"><div class="fg" style="margin:0"><label>From <span class="req">*</span></label><input class="fi" type="date" id="nl_from"></div><div class="fg" style="margin:0"><label>To <span class="req">*</span></label><input class="fi" type="date" id="nl_to"></div></div><div class="fg" style="margin-top:12px;"><label>Reason</label><textarea class="fi" id="nl_reason" rows="3" placeholder="Brief reason for leave request…"></textarea></div></div><div class="mfoot"><button class="btn btn-out" onclick="closeM('mNewLeave')">Cancel</button><button class="btn btn-gold" onclick="saveLeave()">Submit Request</button></div></div></div>
+
+<div class="mov" id="mNewAward"><div class="modal" style="max-width:500px;"><div class="mhd"><div class="mhd-t">Give Award</div><button class="mx" onclick="closeM('mNewAward')">✕</button></div><div class="mbody"><div class="fg"><label>Award Type <span class="req">*</span></label><select class="fi" id="na_type"><option>Employee of the Month</option><option>Outstanding Service</option><option>Team Player Award</option><option>Most Improved</option><option>Five-Star Host Award</option><option>Perfect Attendance</option></select></div><div class="fg"><label>Employee <span class="req">*</span></label><select class="fi" id="na_emp"><option>Maria Santos</option><option>Jean Dubois</option><option>Fatima Camará</option><option>João Cardoso</option><option>Ahmed Al-Rashid</option></select></div><div class="fg"><label>Note</label><textarea class="fi" id="na_note" rows="3" placeholder="Why this person deserves this award…"></textarea></div></div><div class="mfoot"><button class="btn btn-out" onclick="closeM('mNewAward')">Cancel</button><button class="btn btn-gold" onclick="saveAward()">Give Award</button></div></div></div>
+
+<div class="mov" id="mNewExpense"><div class="modal" style="max-width:520px;"><div class="mhd"><div class="mhd-t">Submit Expense</div><button class="mx" onclick="closeM('mNewExpense')">✕</button></div><div class="mbody"><div class="fg2"><div class="fg" style="margin:0"><label>Employee <span class="req">*</span></label><select class="fi"><option>Maria Santos</option><option>João Cardoso</option><option>Sales Manager</option></select></div><div class="fg" style="margin:0"><label>Category <span class="req">*</span></label><select class="fi"><option>Transport</option><option>Meals</option><option>Office Supplies</option><option>Phone / Internet</option><option>Field Expenses</option><option>Other</option></select></div></div><div class="fg" style="margin-top:12px;"><label>Description <span class="req">*</span></label><input class="fi" placeholder="Brief description"></div><div class="fg2" style="margin-top:12px;"><div class="fg" style="margin:0"><label>Amount (XOF) <span class="req">*</span></label><input class="fi" type="number" placeholder="0"></div><div class="fg" style="margin:0"><label>Date</label><input class="fi" type="date"></div></div></div><div class="mfoot"><button class="btn btn-out" onclick="closeM('mNewExpense')">Cancel</button><button class="btn btn-gold" onclick="toast('Expense submitted for approval','ok');closeM('mNewExpense')">Submit</button></div></div></div>
+
+<div class="mov" id="mNewHoliday"><div class="modal" style="max-width:460px;"><div class="mhd"><div class="mhd-t">Add Holiday</div><button class="mx" onclick="closeM('mNewHoliday')">✕</button></div><div class="mbody"><div class="fg"><label>Holiday Name <span class="req">*</span></label><input class="fi" placeholder="e.g. National Heroes Day"></div><div class="fg2"><div class="fg" style="margin:0"><label>Date <span class="req">*</span></label><input class="fi" type="date"></div><div class="fg" style="margin:0"><label>Type</label><select class="fi"><option>Public Holiday</option><option>Hotel Closure</option><option>Optional</option></select></div></div></div><div class="mfoot"><button class="btn btn-out" onclick="closeM('mNewHoliday')">Cancel</button><button class="btn btn-gold" onclick="toast('Holiday added','ok');closeM('mNewHoliday')">Add</button></div></div></div>
+
+<div class="mov" id="mNewReq"><div class="modal"><div class="mhd"><div class="mhd-t">New Staff Requisition</div><button class="mx" onclick="closeM('mNewReq')">✕</button></div><div class="mbody"><div class="fg2"><div class="fg" style="margin:0"><label>Position Title <span class="req">*</span></label><input class="fi" id="nr_title" placeholder="Job title needed"></div><div class="fg" style="margin:0"><label>Department <span class="req">*</span></label><select class="fi" id="nr_dept"><option>Food &amp; Beverage</option><option>Front Office</option><option>Rooms</option><option>Sales</option><option>Engineering</option><option>Finance</option><option>HR</option><option>Security</option></select></div></div><div class="fg2" style="margin-top:12px;"><div class="fg" style="margin:0"><label>No. of Positions</label><input class="fi" type="number" id="nr_count" value="1" min="1"></div><div class="fg" style="margin:0"><label>Urgency</label><select class="fi" id="nr_urg"><option>Normal</option><option>High</option><option>Urgent</option></select></div></div><div class="fg" style="margin-top:12px;"><label>Reason / Justification</label><textarea class="fi" id="nr_reason" rows="3" placeholder="Why is this position needed?"></textarea></div></div><div class="mfoot"><button class="btn btn-out" onclick="closeM('mNewReq')">Cancel</button><button class="btn btn-gold" onclick="saveReq()">Submit Requisition</button></div></div></div>
+
+<div class="mov" id="mApplicantDetail"><div class="modal modal-lg"><div class="mhd"><div class="mhd-t" id="madTitle">Applicant Detail</div><button class="mx" onclick="closeM('mApplicantDetail')">✕</button></div><div class="mbody" id="madBody"></div><div class="mfoot"><button class="btn btn-out" onclick="closeM('mApplicantDetail')">Close</button><button class="btn btn-navy" id="madShortBtn">Shortlist</button><button class="btn btn-red" id="madRejectBtn">Decline</button><button class="btn btn-gold" id="madInterviewBtn">Invite to Interview</button></div></div></div>
+
+<div id="toastC"></div>
+<script>
+'use strict';
+/* ── NAV ── */
+const PAGE_NAMES={hrmdash:'HR Dashboard',noticeboard:'Notice Board',employees:'All Employees',attendance:'Attendance',leaves:'Leave Management',payroll:'Payroll & Payslips',awards:'Awards & Recognition',expenses:'Expense Claims',holidays:'Holidays',recdash:'Recruitment Dashboard',applicants:'Applicants',shortlist:'Shortlisting Panel',joblistings:'Job Listings',requisitions:'Staff Requisitions',postjob:'Post New Job'};
+function nav(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  const pg=document.getElementById('pg-'+id);if(pg)pg.classList.add('on');
+  document.querySelectorAll('.sbi').forEach(s=>s.classList.remove('on'));
+  if(el)el.classList.add('on');
+  const t=document.getElementById('tbTitle');if(t)t.textContent=PAGE_NAMES[id]||id;
+  document.getElementById('content').scrollTop=0;
+}
+function doLogout(){location.reload();}
+function openM(id){const m=document.getElementById(id);if(m)m.classList.add('open');}
+function closeM(id){const m=document.getElementById(id);if(m)m.classList.remove('open');}
+document.addEventListener('click',e=>{if(e.target.classList.contains('mov'))e.target.classList.remove('open');});
+
+/* ── CLOCK ── */
+function tick(){const el=document.getElementById('tbDate');if(el)el.textContent=new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'})+' · '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}
+tick();setInterval(tick,30000);
+
+/* ── TOAST ── */
+function toast(msg,type='info'){
+  const c=document.getElementById('toastC');if(!c)return;
+  const clr={success:'#10b981',ok:'#F8BC1A',info:'#3b82f6',warn:'#f59e0b',error:'#ef4444'};
+  const t=document.createElement('div');t.className='toast'+(type==='ok'?' ok':type==='err'?' err':'');
+  t.style.borderLeftColor=clr[type]||clr.info;t.textContent=msg;c.appendChild(t);
+  setTimeout(()=>{t.style.transition='opacity .3s';t.style.opacity='0';setTimeout(()=>t.remove(),350);},3500);
+}
+
+/* ══════════════ DATA ══════════════ */
+const EMPS=[
+  {id:'HB-EMP-001',fn:'Maria',ln:'Santos',dept:'Front Office',role:'Receptionist',type:'Full-time',joined:'15 Mar 2022',salary:285000,status:'Active'},
+  {id:'HB-EMP-002',fn:'João',ln:'Cardoso',dept:'Front Office',role:'Front Office Manager',type:'Full-time',joined:'1 Jan 2021',salary:620000,status:'Active'},
+  {id:'HB-EMP-003',fn:'Fatima',ln:'Camará',dept:'Rooms',role:'Housekeeping Supervisor',type:'Full-time',joined:'10 Jun 2020',salary:380000,status:'Active'},
+  {id:'HB-EMP-004',fn:'Carlos',ln:'Mendes',dept:'Food & Beverage',role:'Restaurant Manager',type:'Full-time',joined:'5 Feb 2019',salary:700000,status:'Active'},
+  {id:'HB-EMP-005',fn:'Amina',ln:'Baldé',dept:'Food & Beverage',role:'Head Chef',type:'Full-time',joined:'20 Sep 2021',salary:560000,status:'Active'},
+  {id:'HB-EMP-006',fn:'Rosa',ln:'Dias',dept:'Sales',role:'Sales Manager',type:'Full-time',joined:'3 Apr 2022',salary:620000,status:'Active'},
+  {id:'HB-EMP-007',fn:'Alfa',ln:'Djalo',dept:'Engineering',role:'Maintenance Technician',type:'Full-time',joined:'11 Nov 2020',salary:320000,status:'Active'},
+  {id:'HB-EMP-008',fn:'Mamadou',ln:'Bah',dept:'Security',role:'Security Officer',type:'Full-time',joined:'1 Jul 2023',salary:220000,status:'Active'},
+  {id:'HB-EMP-009',fn:'Ana',ln:'Pereira',dept:'HR',role:'HR Coordinator',type:'Full-time',joined:'15 Aug 2022',salary:350000,status:'Active'},
+  {id:'HB-EMP-010',fn:'Ibrahim',ln:'Embaló',dept:'Finance',role:'Accounts Officer',type:'Full-time',joined:'2 Mar 2021',salary:490000,status:'On Leave'},
+];
+let allEmps=[...EMPS];
+
+const APPLICANTS=[
+  {id:'APP-001',name:'Diallo Amadou',email:'d.amadou@gmail.com',role:'Restaurant Manager',roleId:'HB-2026-001',dept:'Food & Beverage',applied:'10 Jun 2026',exp:'5+ years',status:'Shortlisted',rating:4,cover:'Experienced restaurant manager with 7 years in 5-star hotels across Senegal and Guinea. Fluent in Portuguese, French, and English.',nationality:'Senegalese'},
+  {id:'APP-002',name:'Mariana Costa',email:'m.costa@outlook.pt',role:'Front Office Manager',roleId:'HB-2026-003',dept:'Front Office',applied:'12 Jun 2026',exp:'3–5 years',status:'Interview',rating:5,cover:'4 years as Front Office Manager at Radisson Blu Dakar. Opera PMS certified. Fluent in Portuguese, English and French.',nationality:'Portuguese'},
+  {id:'APP-003',name:'Bakary Sané',email:'bakary.s@yahoo.fr',role:'Sales Manager',roleId:'HB-2026-006',dept:'Sales',applied:'14 Jun 2026',exp:'3–5 years',status:'Under Review',rating:3,cover:'Hotel sales professional with established NGO and embassy relationships in Bissau.',nationality:'Guinea-Bissauan'},
+  {id:'APP-004',name:'Li Wei',email:'li.wei88@qq.com',role:'Head Chef — Chinese Cuisine',roleId:'HB-2026-002',dept:'Food & Beverage',applied:'15 Jun 2026',exp:'3–5 years',status:'Under Review',rating:4,cover:'Head Chef with 8 years experience in authentic Cantonese and Sichuan cuisine. Available for relocation.',nationality:'Chinese'},
+  {id:'APP-005',name:'Fatou Diallo',email:'f.diallo@gmail.com',role:'Receptionist',roleId:'HB-2026-004',dept:'Front Office',applied:'16 Jun 2026',exp:'1–3 years',status:'Applied',rating:0,cover:'Recent hospitality graduate with 1 year reception experience. Fluent in Portuguese, Crioulo and basic French.',nationality:'Guinea-Bissauan'},
+  {id:'APP-006',name:'Pedro Tavares',email:'p.tavares@gmail.com',role:'Accounts Officer',roleId:'HB-2026-009',dept:'Finance',applied:'17 Jun 2026',exp:'3–5 years',status:'Applied',rating:0,cover:'CPA with 4 years hospitality accounting experience in Cape Verde and Guinea-Bissau.',nationality:'Cape Verdean'},
+  {id:'APP-007',name:'Aissatou Balde',email:'aissatou.b@hotmail.com',role:'Housekeeping Supervisor',roleId:'HB-2026-005',dept:'Rooms',applied:'18 Jun 2026',exp:'3–5 years',status:'Applied',rating:0,cover:'Experienced housekeeping team leader committed to five-star cleanliness standards.',nationality:'Guinea-Bissauan'},
+  {id:'APP-008',name:'David Fernandes',email:'d.fernandes@live.com',role:'Maintenance Technician',roleId:'HB-2026-007',dept:'Engineering',applied:'19 Jun 2026',exp:'1–3 years',status:'Applied',rating:0,cover:'Qualified electrician with hotel maintenance experience.',nationality:'Portuguese'},
+  {id:'APP-009',name:'Rokhaya Sy',email:'rokhaya.sy@orange.sn',role:'HR Coordinator',roleId:'HB-2026-011',dept:'HR',applied:'20 Jun 2026',exp:'1–3 years',status:'Shortlisted',rating:4,cover:'HR professional with recruitment and onboarding experience at a Dakar hotel group.',nationality:'Senegalese'},
+  {id:'APP-010',name:'Mamadu Jaló',email:'m.jalo@gmail.com',role:'Security Officer',roleId:'HB-2026-010',dept:'Security',applied:'21 Jun 2026',exp:'1–3 years',status:'Applied',rating:0,cover:'Certified security professional available for night shifts and weekends.',nationality:'Guinea-Bissauan'},
+];
+let filteredApps=[...APPLICANTS];
+
+const JOBS=[
+  {id:'HB-2026-001',title:'Restaurant Manager',dept:'Food & Beverage',type:'Full-time',exp:'5+ years',salary:'XOF 600,000–800,000',deadline:'30 Jul 2026',posted:'1 Jun 2026',apps:1,featured:true},
+  {id:'HB-2026-002',title:'Head Chef — Chinese Cuisine',dept:'Food & Beverage',type:'Full-time',exp:'3–5 years',salary:'XOF 500,000–650,000',deadline:'15 Jul 2026',posted:'3 Jun 2026',apps:1,featured:false},
+  {id:'HB-2026-003',title:'Front Office Manager',dept:'Front Office',type:'Full-time',exp:'3–5 years',salary:'XOF 500,000–700,000',deadline:'31 Jul 2026',posted:'5 Jun 2026',apps:2,featured:true},
+  {id:'HB-2026-004',title:'Receptionist',dept:'Front Office',type:'Full-time',exp:'1–3 years',salary:'XOF 250,000–320,000',deadline:'20 Jul 2026',posted:'7 Jun 2026',apps:1,featured:false},
+  {id:'HB-2026-005',title:'Housekeeping Supervisor',dept:'Rooms',type:'Full-time',exp:'3–5 years',salary:'XOF 320,000–420,000',deadline:'25 Jul 2026',posted:'2 Jun 2026',apps:1,featured:false},
+  {id:'HB-2026-006',title:'Sales Manager',dept:'Sales',type:'Full-time',exp:'3–5 years',salary:'XOF 550,000–750,000',deadline:'1 Aug 2026',posted:'4 Jun 2026',apps:1,featured:true},
+  {id:'HB-2026-007',title:'Maintenance Technician',dept:'Engineering',type:'Full-time',exp:'1–3 years',salary:'XOF 280,000–380,000',deadline:'15 Aug 2026',posted:'6 Jun 2026',apps:1,featured:false},
+  {id:'HB-2026-008',title:'Barista / Bartender',dept:'Food & Beverage',type:'Full-time',exp:'1–3 years',salary:'XOF 220,000–290,000',deadline:'10 Jul 2026',posted:'8 Jun 2026',apps:0,featured:false},
+  {id:'HB-2026-009',title:'Accounts Officer',dept:'Finance',type:'Full-time',exp:'3–5 years',salary:'XOF 420,000–560,000',deadline:'20 Aug 2026',posted:'5 Jun 2026',apps:1,featured:false},
+  {id:'HB-2026-010',title:'Security Officer',dept:'Security',type:'Full-time',exp:'1–3 years',salary:'XOF 200,000–260,000',deadline:'31 Jul 2026',posted:'9 Jun 2026',apps:1,featured:false},
+  {id:'HB-2026-011',title:'HR Coordinator',dept:'HR',type:'Full-time',exp:'1–3 years',salary:'XOF 300,000–400,000',deadline:'15 Aug 2026',posted:'6 Jun 2026',apps:1,featured:false},
+  {id:'HB-2026-012',title:'Room Attendant',dept:'Rooms',type:'Full-time',exp:'Entry Level',salary:'XOF 160,000–200,000',deadline:'30 Jul 2026',posted:'10 Jun 2026',apps:0,featured:false},
+];
+
+const DEPT_C={'Food & Beverage':'#1a4a5e','Front Office':'#1e3560','Rooms':'#2b4a2b','Sales':'#4a2e10','Engineering':'#2d1b50','Finance':'#1a3a28','HR':'#3a1a1a','Security':'#1c2c3a'};
+
+const NOTICES=[
+  {id:1,title:'Ramadan Working Hours',body:'During the holy month of Ramadan, all staff working evening shifts will have their meal break extended to 30 minutes. This applies from 1 July 2026.',priority:'Important',author:'HR Manager',date:'20 Jun 2026'},
+  {id:2,title:'Monthly Staff Meeting — July 2026',body:'The monthly all-hands staff meeting will be held on Tuesday 7 July 2026 at 09:00 in the Nelson Mandela Hall. Attendance is mandatory for all department heads.',priority:'Normal',author:'General Manager',date:'18 Jun 2026'},
+  {id:3,title:'New Uniform Collection',body:'New staff uniforms are available for collection from the HR office from Monday 24 June 2026. Please bring your staff ID.',priority:'Normal',author:'HR Coordinator',date:'22 Jun 2026'},
+];
+let allNotices=[...NOTICES];
+
+const LEAVE_REQUESTS=[
+  {emp:'Ibrahim Embaló',dept:'Finance',type:'Annual Leave',from:'23 Jun 2026',to:'30 Jun 2026',days:6,reason:'Family travel',status:'Approved'},
+  {emp:'Fatima Camará',dept:'Rooms',type:'Sick Leave',from:'24 Jun 2026',to:'25 Jun 2026',days:2,reason:'Medical appointment',status:'Pending'},
+  {emp:'Mamadou Bah',dept:'Security',type:'Emergency Leave',from:'26 Jun 2026',to:'26 Jun 2026',days:1,reason:'Personal emergency',status:'Pending'},
+  {emp:'Ana Pereira',dept:'HR',type:'Annual Leave',from:'1 Jul 2026',to:'5 Jul 2026',days:5,reason:'Annual holiday',status:'Pending'},
+  {emp:'Bakary Djassi',dept:'Food & Beverage',type:'Annual Leave',from:'10 Jul 2026',to:'14 Jul 2026',days:5,reason:'Annual leave entitlement',status:'Pending'},
+];
+let allLeaves=[...LEAVE_REQUESTS];
+
+const AWARDS=[
+  {award:'Employee of the Month',emp:'Fatima Camará',dept:'Rooms',by:'GM',date:'1 Jun 2026',note:'Consistently exceeded five-star housekeeping standards throughout May 2026.'},
+  {award:'Five-Star Host Award',emp:'Maria Santos',dept:'Front Office',by:'Ops Manager',date:'15 May 2026',note:'Exceptional guest feedback score of 9.8/10 for May.'},
+  {award:'Perfect Attendance',emp:'Mamadou Bah',dept:'Security',by:'HR Manager',date:'1 May 2026',note:'Perfect attendance record for Q1 2026.'},
+  {award:'Outstanding Service',emp:'Carlos Mendes',dept:'Food & Beverage',by:'GM',date:'1 Apr 2026',note:'Praised by multiple VIP guests for the Shahrazad dining experience.'},
+];
+let allAwards=[...AWARDS];
+
+const EXPENSES=[
+  {emp:'Rosa Dias',dept:'Sales',cat:'Transport',desc:'Client visit — American Embassy',amt:45000,date:'20 Jun 2026',receipt:'receipt_001.pdf',status:'Pending'},
+  {emp:'João Cardoso',dept:'Front Office',cat:'Office Supplies',desc:'Reception desk stationery',amt:18500,date:'18 Jun 2026',receipt:'receipt_002.pdf',status:'Pending'},
+  {emp:'Carlos Mendes',dept:'Food & Beverage',cat:'Meals',desc:'Team lunch — supplier meeting',amt:72000,date:'15 Jun 2026',receipt:'receipt_003.pdf',status:'Pending'},
+  {emp:'Alfa Djalo',dept:'Engineering',cat:'Other',desc:'Replacement AC part',amt:165000,date:'12 Jun 2026',receipt:'receipt_004.pdf',status:'Approved'},
+  {emp:'Ana Pereira',dept:'HR',cat:'Transport',desc:'Job fair attendance',amt:25000,date:'10 Jun 2026',receipt:'receipt_005.pdf',status:'Approved'},
+];
+
+const HOLIDAYS=[
+  {date:'1 Jan 2026',day:'Thursday',name:'New Year\'s Day',type:'Public Holiday'},
+  {date:'20 Jan 2026',day:'Tuesday',name:'Heroes\' Day',type:'Public Holiday'},
+  {date:'8 Mar 2026',day:'Sunday',name:'International Women\'s Day',type:'Public Holiday'},
+  {date:'1 May 2026',day:'Friday',name:'Labour Day',type:'Public Holiday'},
+  {date:'3 Aug 2026',day:'Monday',name:'Colonialism Remembrance Day',type:'Public Holiday'},
+  {date:'24 Sep 2026',day:'Thursday',name:'Independence Day',type:'Public Holiday'},
+  {date:'1 Nov 2026',day:'Sunday',name:'All Saints\' Day',type:'Public Holiday'},
+  {date:'25 Dec 2026',day:'Friday',name:'Christmas Day',type:'Public Holiday'},
+  {date:'7 Jul 2026',day:'Tuesday',name:'Staff Annual Dinner',type:'Hotel Event'},
+];
+
+const REQUISITIONS=[
+  {id:'REQ-2026-001',title:'Bar Lounge Supervisor',dept:'Food & Beverage',count:1,urgency:'High',reason:'Current supervisor resigned. Busy summer season requires replacement within 3 weeks.',status:'Approved',date:'15 Jun 2026'},
+  {id:'REQ-2026-002',title:'Room Attendant (x3)',dept:'Rooms',count:3,urgency:'Normal',reason:'Increased occupancy rate requires additional housekeeping staff for Q3.',status:'Pending',date:'18 Jun 2026'},
+  {id:'REQ-2026-003',title:'IT Support Technician',dept:'Engineering',count:1,urgency:'Normal',reason:'Hotel systems expansion requires dedicated IT support.',status:'Pending',date:'20 Jun 2026'},
+];
+let allReqs=[...REQUISITIONS];
+
+/* ══════════════ BUILDERS ══════════════ */
+function sBdg(s){const m={Active:'bg Active',Present:'bg Present','On Leave':'bo On Leave','Approved':'bg Approved','Pending':'bo Pending','Declined':'br Declined','Shortlisted':'bp Shortlisted','Interview':'bn2 Interview','Under Review':'bo Under Review','Offered':'bg Offered','Rejected':'br Rejected','Applied':'bb Applied','Probation':'by Probation'};const[c,...rest]=(m[s]||'bgr '+s).split(' ');return`<span class="bdg ${c}">${rest.join(' ')}</span>`;}
+
+/* ── DASHBOARD ── */
+function buildDash(){
+  // Bar chart
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],vals=[44,43,42,45,41,38,35];
+  const max=Math.max(...vals);
+  const chart=document.getElementById('attChart');
+  const lbls=document.getElementById('attChartLbls');
+  if(chart)chart.innerHTML=vals.map((v,i)=>`<div class="bar-wrap"><div class="bar-val">${v}</div><div class="bar" style="height:${Math.round(v/max*100)}%;background:${i===4?'var(--gold)':'rgba(38,34,98,.12)'};" title="${days[i]}: ${v} present"></div></div>`).join('');
+  if(lbls)lbls.innerHTML=days.map(d=>`<span>${d}</span>`).join('');
+  // Pending leaves
+  const ll=document.getElementById('dashLeaveList');
+  if(ll)ll.innerHTML=allLeaves.filter(l=>l.status==='Pending').slice(0,3).map(l=>`<div style="padding:8px 0;border-bottom:1px solid var(--brd);font-size:12px;"><div style="font-weight:600;color:var(--navy);">${l.emp}</div><div style="color:var(--text3);">${l.type} · ${l.from}–${l.to} (${l.days}d)</div></div>`).join('');
+  // Upcoming
+  const up=document.getElementById('dashUpcoming');
+  const items=[{day:'7',mo:'Jul',label:'Staff Annual Dinner',sub:'Nelson Mandela Hall'},{day:'1',mo:'Jul',label:'New Uniforms Available',sub:'From HR office'},{day:'15',mo:'Jul',label:'Application Deadline',sub:'Head Chef role'},{day:'30',mo:'Jul',label:'Ibrahim Embaló returns',sub:'Finance dept'},];
+  if(up)up.innerHTML=items.map(i=>`<div class="upcoming-item"><div class="upcoming-date"><div class="upcoming-day">${i.day}</div><div class="upcoming-mo">${i.mo}</div></div><div><div class="upcoming-label">${i.label}</div><div class="upcoming-sub">${i.sub}</div></div></div>`).join('');
+  // Latest applicants
+  const da=document.getElementById('dashApplicants');
+  if(da)da.innerHTML=APPLICANTS.slice(0,4).map(a=>`<div style="padding:9px 14px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:10px;"><div class="av">${a.name.split(' ').map(x=>x[0]).join('')}</div><div style="flex:1;min-width:0;"><div style="font-size:12.5px;font-weight:600;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${a.name}</div><div style="font-size:11px;color:var(--text3);">${a.role}</div></div>${sBdg(a.status)}</div>`).join('');
+  // Pending expenses
+  const de=document.getElementById('dashExpenses');
+  if(de)de.innerHTML=EXPENSES.filter(e=>e.status==='Pending').map(e=>`<div style="padding:9px 14px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;"><div><div style="font-size:12.5px;font-weight:600;color:var(--navy);">${e.emp}</div><div style="font-size:11px;color:var(--text3);">${e.cat} · ${e.desc}</div></div><div style="text-align:right;"><div style="font-size:12.5px;font-weight:700;color:var(--navy);">XOF ${e.amt.toLocaleString()}</div><div style="display:flex;gap:5px;margin-top:4px;"><button class="btn btn-xs btn-gold" onclick="approveExp('${e.emp}')">Approve</button><button class="btn btn-xs btn-red" onclick="toast('Declined','ok')">Decline</button></div></div></div>`).join('');
+}
+function approveExp(n){toast(n+'\'s expense approved','ok');buildDash();}
+
+/* ── NOTICE BOARD ── */
+function buildNotices(){
+  const c=document.getElementById('noticeList');if(!c)return;
+  const priColor={Urgent:'var(--r)',Important:'var(--o)',Normal:'var(--navy)'};
+  c.innerHTML=allNotices.map((n,i)=>`<div class="notice-card" style="border-left-color:${priColor[n.priority]||'var(--navy)'}"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px;"><div class="notice-title">${n.title}</div>${sBdg(n.priority)}</div><div class="notice-body">${n.body}</div><div class="notice-meta"><span>Posted by ${n.author}</span><span>${n.date}</span><button class="btn btn-xs btn-red" onclick="deleteNotice(${i})" style="margin-left:auto;">Delete</button></div></div>`).join('');
+}
+function saveNotice(){const t=document.getElementById('nn_t')?.value.trim(),b=document.getElementById('nn_b')?.value.trim();if(!t||!b){toast('Title and message required','');return;}allNotices.unshift({id:allNotices.length+1,title:t,body:b,priority:document.getElementById('nn_p')?.value||'Normal',author:'HR Manager',date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})});closeM('mNewNotice');buildNotices();toast('Notice posted','ok');document.getElementById('nn_t').value='';document.getElementById('nn_b').value='';}
+function deleteNotice(i){if(confirm('Delete this notice?')){allNotices.splice(i,1);buildNotices();toast('Notice deleted','ok');}}
+
+/* ── EMPLOYEES ── */
+function buildEmpTbl(data){
+  data=data||allEmps;
+  const t=document.getElementById('empTbl');if(!t)return;
+  t.innerHTML=data.map(e=>`<tr><td><div style="display:flex;align-items:center;gap:9px;"><div class="av">${e.fn[0]}${e.ln[0]}</div><div><div style="font-weight:600;">${e.fn} ${e.ln}</div><div style="font-size:11px;color:var(--text3);">${e.id}</div></div></div></td><td><span style="font-size:11px;font-weight:700;padding:2px 7px;background:${DEPT_C[e.dept]||'#333'}18;color:${DEPT_C[e.dept]||'#333'};">${e.dept}</span></td><td style="font-size:12.5px;">${e.role}</td><td style="font-size:12px;color:var(--text3);">${e.type}</td><td style="font-size:12px;color:var(--text3);">${e.joined}</td><td>${sBdg(e.status)}</td><td><div style="display:flex;gap:4px;"><button class="btn btn-xs btn-navy" onclick="toast('Viewing ${e.fn}','info')">View</button><button class="btn btn-xs btn-out" onclick="toast('Editing','info')">Edit</button></div></td></tr>`).join('');
+  const info=document.getElementById('empInfo');if(info)info.textContent=data.length+' employees';
+}
+function srchEmp(q){buildEmpTbl(q?allEmps.filter(e=>JSON.stringify(e).toLowerCase().includes(q.toLowerCase())):null);}
+function filterEmpDept(d){buildEmpTbl(d?allEmps.filter(e=>e.dept===d):null);}
+function saveEmp(){const fn=document.getElementById('ne_fn')?.value.trim(),ln=document.getElementById('ne_ln')?.value.trim();if(!fn||!ln){toast('Name required','');return;}const newId='HB-EMP-'+(String(allEmps.length+1).padStart(3,'0'));allEmps.push({id:newId,fn,ln,dept:document.getElementById('ne_dept')?.value||'Front Office',role:document.getElementById('ne_role')?.value||'—',type:'Full-time',joined:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),salary:parseInt(document.getElementById('ne_salary')?.value)||0,status:'Active'});buildEmpTbl();closeM('mNewEmp');toast(fn+' '+ln+' added','ok');}
+
+/* ── ATTENDANCE ── */
+function buildAttCalendar(){
+  const cal=document.getElementById('attCal');if(!cal)return;
+  const holidays=[1,7,13,14,21,28];
+  const absent=[3,8,12,17,22];
+  const today=25;
+  let html='';
+  for(let i=0;i<6;i++)html+='<div class="att-day" style="opacity:0"></div>';
+  for(let d=1;d<=30;d++){
+    const dow=(d+0)%7;
+    let cls='att-day ';
+    if(d>today)cls+='future';
+    else if(d===today)cls+='today';
+    else if(dow===0||dow===6)cls+='weekend';
+    else if(holidays.includes(d))cls+='holiday';
+    else if(absent.includes(d))cls+='absent';
+    else cls+='present';
+    html+=`<div class="${cls}">${d}</div>`;
+  }
+  cal.innerHTML=html;
+  const absent_staff=[{fn:'Ibrahim',ln:'Embaló',dept:'Finance'},{fn:'Bakary',ln:'Djassi',dept:'Food & Beverage'}];
+  const al=document.getElementById('absentList');
+  if(al)al.innerHTML=absent_staff.map(e=>`<div style="display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--brd);"><div class="av">${e.fn[0]}${e.ln[0]}</div><div><div style="font-size:12.5px;font-weight:600;">${e.fn} ${e.ln}</div><div style="font-size:11px;color:var(--text3);">${e.dept}</div></div></div>`).join('')+'<div style="font-size:11px;color:var(--text3);margin-top:8px;">2 absent today</div>';
+}
+function buildMarkAttList(){const l=document.getElementById('markAttList');if(!l)return;l.innerHTML=allEmps.map((e,i)=>`<div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--brd);"><input type="checkbox" id="att_${i}" style="accent-color:var(--r);"><div class="av">${e.fn[0]}${e.ln[0]}</div><label for="att_${i}" style="flex:1;font-size:12.5px;cursor:pointer;">${e.fn} ${e.ln} <span style="color:var(--text3);font-size:11px;">— ${e.dept}</span></label></div>`).join('');}
+function saveAtt(){closeM('mMarkAtt');toast('Attendance marked for today','ok');buildAttCalendar();}
+
+/* ── LEAVES ── */
+function buildLeaves(){
+  const pending=document.getElementById('leaveRequests');
+  const pend=allLeaves.filter(l=>l.status==='Pending');
+  if(pending)pending.innerHTML=pend.length?pend.map((l,i)=>`<div class="leave-card"><div><div class="leave-type">${l.type}</div><div class="leave-dates">${l.emp} — ${l.from} to ${l.to}</div><div class="leave-days">${l.days} day${l.days!==1?'s':''} · ${l.dept} · Reason: ${l.reason}</div></div><div class="leave-actions"><button class="btn btn-sm btn-gold" onclick="decideLeave(${allLeaves.indexOf(l)},'Approved')">Approve</button><button class="btn btn-sm btn-red" onclick="decideLeave(${allLeaves.indexOf(l)},'Declined')">Decline</button></div></div>`).join(''):'<div style="padding:14px;font-size:12px;color:var(--text3);">No pending leave requests.</div>';
+  const hist=document.getElementById('leaveTbl');
+  if(hist)hist.innerHTML=allLeaves.map(l=>`<tr><td><strong>${l.emp}</strong></td><td>${l.type}</td><td style="font-size:12px;">${l.from}</td><td style="font-size:12px;">${l.to}</td><td style="text-align:center;">${l.days}</td><td style="font-size:12px;color:var(--text3);">${l.reason}</td><td>${sBdg(l.status)}</td></tr>`).join('');
+}
+function decideLeave(i,decision){allLeaves[i].status=decision;buildLeaves();toast(allLeaves[i].emp+' leave '+decision.toLowerCase(),'ok');}
+function saveLeave(){const emp=document.getElementById('nl_emp')?.value,type=document.getElementById('nl_type')?.value,from=document.getElementById('nl_from')?.value,to=document.getElementById('nl_to')?.value;if(!from||!to){toast('Select dates','');return;}const days=Math.max(1,Math.round((new Date(to)-new Date(from))/(1000*60*60*24))+1);allLeaves.push({emp,dept:'—',type,from,to,days,reason:document.getElementById('nl_reason')?.value||'—',status:'Pending'});buildLeaves();closeM('mNewLeave');toast('Leave request submitted','ok');}
+
+/* ── PAYROLL ── */
+function buildPayroll(){
+  const t=document.getElementById('payrollTbl');if(!t)return;
+  t.innerHTML=allEmps.map(e=>{
+    const allowance=Math.round(e.salary*.12);
+    const deduction=Math.round(e.salary*.08);
+    const net=e.salary+allowance-deduction;
+    return`<tr><td><div style="display:flex;align-items:center;gap:8px;"><div class="av">${e.fn[0]}${e.ln[0]}</div><div><div style="font-weight:600;">${e.fn} ${e.ln}</div><div style="font-size:11px;color:var(--text3);">${e.id}</div></div></div></td><td style="font-size:12px;">${e.dept}</td><td>XOF ${e.salary.toLocaleString()}</td><td style="color:var(--g);">+XOF ${allowance.toLocaleString()}</td><td style="color:var(--r);">-XOF ${deduction.toLocaleString()}</td><td><strong>XOF ${net.toLocaleString()}</strong></td><td>${sBdg(e.status==='On Leave'?'On Leave':'Active')}</td><td><button class="btn btn-xs btn-navy" onclick="viewPayslip('${e.fn} ${e.ln}',${net})">View Payslip</button><button class="btn btn-xs btn-out" style="margin-left:4px;" onclick="toast('Payslip emailed to ${e.fn}','ok')">Email</button></td></tr>`;}).join('');
+}
+function genAllPayslips(){toast('Payslips generated and emailed to all 47 staff — June 2026','ok');}
+function viewPayslip(name,net){toast('Opening payslip for '+name,'info');}
+
+/* ── AWARDS ── */
+function buildAwards(){
+  const t=document.getElementById('awardsTbl');if(!t)return;
+  const medals={'Employee of the Month':'🥇','Five-Star Host Award':'⭐','Outstanding Service':'🏆','Perfect Attendance':'✅','Team Player Award':'🤝','Most Improved':'📈'};
+  t.innerHTML=allAwards.map(a=>`<tr><td><strong>${medals[a.award]||'🎖️'} ${a.award}</strong></td><td><div style="display:flex;align-items:center;gap:7px;"><div class="av" style="width:26px;height:26px;font-size:10px;">${a.emp.split(' ').map(x=>x[0]).join('')}</div>${a.emp}</div></td><td style="font-size:12px;">${a.dept}</td><td style="font-size:12px;color:var(--text3);">${a.by}</td><td style="font-size:12px;color:var(--text3);">${a.date}</td><td style="font-size:12px;color:var(--text3);max-width:220px;">${a.note}</td></tr>`).join('');
+}
+function saveAward(){const type=document.getElementById('na_type')?.value,emp=document.getElementById('na_emp')?.value,note=document.getElementById('na_note')?.value;allAwards.unshift({award:type,emp,dept:'—',by:'HR Manager',date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),note:note||'—'});buildAwards();closeM('mNewAward');toast('Award given to '+emp,'ok');}
+
+/* ── EXPENSES ── */
+function buildExpenses(){
+  const t=document.getElementById('expTbl');if(!t)return;
+  const rows=[];
+  EXPENSES.forEach(function(e,i){
+    var ap=e.status==='Pending'
+      ?'<button class="btn btn-xs btn-gold" onclick="approveExpRow('+i+')">Approve</button> <button class="btn btn-xs btn-red" onclick="declineExpRow('+i+')">Decline</button>'
+      :'<span style="font-size:11px;color:var(--text3);">—</span>';
+    var row='<tr>'
+      +'<td><strong>'+e.emp+'</strong></td>'
+      +'<td>'+e.cat+'</td>'
+      +'<td style="font-size:12px;">'+e.desc+'</td>'
+      +'<td><strong>XOF '+e.amt.toLocaleString()+'</strong></td>'
+      +'<td style="font-size:12px;">'+e.date+'</td>'
+      +'<td><button class="btn btn-xs btn-out" onclick="viewReceipt('+i+')">View</button></td>'
+      +'<td>'+sBdg(e.status)+'</td>'
+      +'<td>'+ap+'</td>'
+      +'</tr>';
+    rows.push(row);
+  });
+  t.innerHTML=rows.join('');
+}
+function viewReceipt(i){toast('Opening: '+EXPENSES[i].receipt,'info');}
+function approveExpRow(i){EXPENSES[i].status='Approved';buildExpenses();toast('Expense approved','ok');}
+function declineExpRow(i){EXPENSES[i].status='Declined';buildExpenses();toast('Expense declined','ok');}
+
+
+function buildHolidays(){const t=document.getElementById('holidayTbl');if(!t)return;t.innerHTML=HOLIDAYS.map(h=>`<tr><td style="font-weight:600;">${h.date}</td><td style="color:var(--text3);">${h.day}</td><td>${h.name}</td><td>${sBdg(h.type==='Public Holiday'?'Approved':h.type==='Hotel Event'?'Pending':'Pending')}</td><td><button class="btn btn-xs btn-red" onclick="toast('Removed','ok')">Remove</button></td></tr>`).join('');}
+
+/* ── RECRUITMENT DASHBOARD ── */
+function buildKanban(){
+  const cols=[
+    {key:'Applied',label:'Applications',color:'#3b82f6'},
+    {key:'Under Review',label:'Under Review',color:'#f59e0b'},
+    {key:'Shortlisted',label:'Shortlisted',color:'#8b5cf6'},
+    {key:'Interview',label:'Interview',color:'#262262'},
+    {key:'Offered',label:'Offer Made',color:'#10b981'},
+  ];
+  const board=document.getElementById('kanbanBoard');if(!board)return;
+  board.innerHTML=cols.map(col=>{
+    const cards=APPLICANTS.filter(a=>a.status===col.key);
+    return`<div class="kanban-col"><div class="kanban-col-hd" style="border-top:3px solid ${col.color};"><span class="kanban-col-title">${col.label}</span><span class="kanban-cnt" style="background:${col.color}18;color:${col.color};">${cards.length}</span></div><div class="kanban-items">${cards.map(a=>`<div class="k-card" onclick="openApplicant('${a.id}')"><div class="k-card-strip" style="background:${DEPT_C[a.dept]||'#333'};"></div><div class="k-card-name">${a.name}</div><div class="k-card-role">${a.role}</div><div class="k-card-meta"><span class="bdg bgr" style="font-size:9.5px;">${a.dept}</span></div><div class="k-card-date">Applied ${a.applied}</div></div>`).join('')}</div></div>`;
+  }).join('');
+}
+
+/* ── APPLICANTS ── */
+function buildApplicantsTbl(data){
+  data=data||filteredApps;
+  const t=document.getElementById('applicantsTbl');if(!t)return;
+  t.innerHTML=data.map(a=>`<tr><td><div style="display:flex;align-items:center;gap:9px;"><div class="av">${a.name.split(' ').map(x=>x[0]).join('')}</div><div><div style="font-weight:600;">${a.name}</div><div style="font-size:11px;color:var(--text3);">${a.email}</div></div></div></td><td style="font-size:12.5px;">${a.role}</td><td><span style="font-size:11px;font-weight:700;padding:2px 7px;background:${DEPT_C[a.dept]||'#333'}18;color:${DEPT_C[a.dept]||'#333'};">${a.dept}</span></td><td style="font-size:12px;">${a.applied}</td><td style="font-size:12px;">${a.exp}</td><td>${sBdg(a.status)}</td><td><button class="btn btn-xs btn-navy" onclick="openApplicant('${a.id}')">View</button></td></tr>`).join('');
+  const info=document.getElementById('applicantsInfo');if(info)info.textContent=data.length+' applicants';
+}
+function srchApplicants(q){filteredApps=q?APPLICANTS.filter(a=>JSON.stringify(a).toLowerCase().includes(q.toLowerCase())):[...APPLICANTS];buildApplicantsTbl();}
+function filterApplicants(k,v){filteredApps=v?APPLICANTS.filter(a=>k==='dept'?a.dept===v:a.status===v):[...APPLICANTS];buildApplicantsTbl();}
+function openApplicant(id){
+  const a=APPLICANTS.find(x=>x.id===id);if(!a)return;
+  const steps=['Applied','Under Review','Shortlisted','Interview','Offered'];
+  const si=steps.indexOf(a.status);
+  const stepsHtml=steps.map((s,i)=>`<div class="step ${i<si?'done':i===si?'on':''}""><div class="step-dot">${i<si?'✓':''}</div><div class="step-lbl">${s}</div></div>`).join('');
+  const stars='★★★★★'.split('').map((s,i)=>`<span class="star ${i<a.rating?'on':''}" onclick="rateApp('${id}',${i+1})">${s}</span>`).join('');
+  document.getElementById('madTitle').textContent=a.name+' — '+a.role;
+  document.getElementById('madBody').innerHTML=`
+    <div class="apd-grid">
+      <div class="apd-main">
+        <div class="apd-head"><div class="apd-name">${a.name}</div><div class="apd-role">${a.role} · ${a.dept}</div></div>
+        <div class="apd-body">
+          <div class="apd-sec-t">Application Progress</div>
+          <div class="steps">${stepsHtml}</div>
+          <div class="apd-sec-t" style="margin-top:20px;">Cover Letter / Position Summary</div>
+          <p style="font-size:.88rem;color:var(--text2);line-height:1.82;">${a.cover}</p>
+          <div class="apd-sec-t" style="margin-top:20px;">HR Rating</div>
+          <div class="rating-stars">${stars}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:5px;">${a.rating>0?a.rating+'/5 stars':'Not yet rated — click to rate'}</div>
+        </div>
+      </div>
+      <div class="apd-sidebar">
+        <div class="apd-info">
+          <div class="apd-row"><span class="apd-k">Reference</span><span class="apd-v">${a.id}</span></div>
+          <div class="apd-row"><span class="apd-k">Applied For</span><span class="apd-v" style="font-size:11px;max-width:140px;text-align:right;">${a.role}</span></div>
+          <div class="apd-row"><span class="apd-k">Applied</span><span class="apd-v">${a.applied}</span></div>
+          <div class="apd-row"><span class="apd-k">Experience</span><span class="apd-v">${a.exp}</span></div>
+          <div class="apd-row"><span class="apd-k">Nationality</span><span class="apd-v">${a.nationality}</span></div>
+          <div class="apd-row"><span class="apd-k">Email</span><span class="apd-v" style="font-size:11px;"><a href="mailto:${a.email}" style="color:var(--gold);">${a.email}</a></span></div>
+          <div class="apd-row"><span class="apd-k">Status</span><span class="apd-v">${sBdg(a.status)}</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:7px;margin-top:12px;">
+          <button class="btn btn-gold" style="width:100%;justify-content:center;" onclick="updateAppStatus('${id}','Shortlisted');closeM('mApplicantDetail')">Shortlist</button>
+          <button class="btn btn-navy" style="width:100%;justify-content:center;" onclick="updateAppStatus('${id}','Interview');closeM('mApplicantDetail')">Invite to Interview</button>
+          <button class="btn btn-out" style="width:100%;justify-content:center;" onclick="updateAppStatus('${id}','Offered');closeM('mApplicantDetail')">Make Offer</button>
+          <button class="btn btn-red" style="width:100%;justify-content:center;" onclick="updateAppStatus('${id}','Rejected');closeM('mApplicantDetail')">Decline Application</button>
+          <a class="btn btn-out" style="width:100%;justify-content:center;" href="mailto:${a.email}?subject=Re: Application for ${encodeURIComponent(a.role)} — Hala Bissau Hotel">Email Candidate</a>
+        </div>
+      </div>
+    </div>`;
+  openM('mApplicantDetail');
+}
+function rateApp(id,r){const a=APPLICANTS.find(x=>x.id===id);if(a){a.rating=r;openApplicant(id);}}
+function updateAppStatus(id,status){const a=APPLICANTS.find(x=>x.id===id);if(a){a.status=status;buildApplicantsTbl();buildKanban();buildShortlist();toast(a.name+' → '+status,'ok');}}
+
+/* ── SHORTLISTING ── */
+function buildShortlist(){
+  const c=document.getElementById('shortlistCards');if(!c)return;
+  const sl=APPLICANTS.filter(a=>a.status==='Shortlisted'||a.status==='Interview');
+  if(!sl.length){c.innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--text3);font-size:13px;background:var(--white);border:1px solid var(--brd);">No shortlisted candidates yet. Review applicants and shortlist candidates.</div>';return;}
+  c.innerHTML=`<div style="font-size:.6rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);margin-bottom:14px;">${sl.length} Candidate${sl.length!==1?'s':''} in Shortlisting</div>`
+  +sl.map(a=>`<div style="background:var(--white);border:1px solid var(--brd);padding:0;margin-bottom:10px;display:grid;grid-template-columns:1fr auto;overflow:hidden;">
+    <div style="padding:16px 18px;border-right:1px solid var(--brd);">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><div class="av" style="width:38px;height:38px;font-size:14px;">${a.name.split(' ').map(x=>x[0]).join('')}</div><div><div style="font-size:13.5px;font-weight:600;color:var(--navy);">${a.name}</div><div style="font-size:11.5px;color:var(--text3);">${a.role} · ${a.nationality}</div></div>${sBdg(a.status)}</div>
+      <div style="font-size:.58rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Candidate Summary</div>
+      <p style="font-size:.82rem;color:var(--text2);line-height:1.7;">${a.cover.substring(0,200)}…</p>
+      <div style="margin-top:8px;display:flex;gap:3px;">${'★★★★★'.split('').map((s,i)=>`<span style="font-size:16px;color:${i<a.rating?'var(--gold)':'var(--brd)'}">${s}</span>`).join('')}</div>
+    </div>
+    <div style="padding:16px;display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;min-width:160px;">
+      <button class="btn btn-navy btn-sm" style="width:100%;" onclick="updateAppStatus('${a.id}','Interview')">Invite to Interview</button>
+      <button class="btn btn-gold btn-sm" style="width:100%;" onclick="updateAppStatus('${a.id}','Offered')">Make Offer</button>
+      <button class="btn btn-out btn-sm" style="width:100%;" onclick="openApplicant('${a.id}')">Full Profile</button>
+      <button class="btn btn-red btn-sm" style="width:100%;" onclick="updateAppStatus('${a.id}','Rejected')">Decline</button>
+    </div>
+  </div>`).join('');
+}
+
+/* ── JOB LISTINGS ── */
+function buildJobListings(){
+  const c=document.getElementById('jobListingsWrap');if(!c)return;
+  const deptCount={};
+  JOBS.forEach(j=>{deptCount[j.dept]=(deptCount[j.dept]||0)+1;});
+  const dc=document.getElementById('deptJobCount');
+  if(dc)dc.innerHTML=Object.entries(deptCount).map(([d,n])=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--brd);font-size:12px;"><span style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:50%;background:${DEPT_C[d]};flex-shrink:0;"></span>${d}</span><span style="font-weight:700;color:var(--navy);">${n}</span></div>`).join('');
+  c.innerHTML=JOBS.map(j=>{
+    const apps=APPLICANTS.filter(a=>a.roleId===j.id).length;
+    return`<div class="job-pub-card"><div class="jpc-strip" style="background:${DEPT_C[j.dept]||'#333'};"></div><div class="jpc-body"><div class="jpc-dept">${j.dept}</div><div class="jpc-title">${j.title}</div><div class="jpc-pills"><span class="jpc-pill">🗂 ${j.type}</span><span class="jpc-pill">⏳ ${j.exp}</span><span class="jpc-pill">📅 Closes ${j.deadline}</span>${j.featured?'<span class="jpc-pill" style="background:rgba(248,188,26,.1);color:var(--gold);border-color:rgba(248,188,26,.3);">Featured</span>':''}</div></div><div class="jpc-right"><div class="jpc-salary">${j.salary}</div><div class="jpc-apps">${apps} applicant${apps!==1?'s':''}</div><div style="display:flex;gap:5px;flex-direction:column;"><button class="btn btn-xs btn-navy" onclick="nav('applicants',document.getElementById('sbi-applicants'))">View Applicants</button><button class="btn btn-xs btn-red" onclick="toast('${j.title} closed','warn')">Close Role</button></div></div></div>`;
+  }).join('');
+}
+
+/* ── REQUISITIONS ── */
+function buildRequisitions(){
+  const c=document.getElementById('reqList');if(!c)return;
+  const urgColor={Urgent:'var(--r)',High:'var(--o)',Normal:'var(--navy)'};
+  c.innerHTML=allReqs.map((r,i)=>`<div class="req-card"><div class="req-card-hd"><div><div class="req-title">${r.title}</div><div class="req-dept">${r.dept} · ${r.count} position${r.count!==1?'s':''}</div></div><div style="display:flex;gap:6px;align-items:flex-start;">${sBdg(r.status==='Approved'?'Approved':'Pending')}<span class="bdg" style="background:${urgColor[r.urgency]}18;color:${urgColor[r.urgency]};border:1px solid ${urgColor[r.urgency]}38;">${r.urgency}</span></div></div><div class="req-meta"><span>${r.id}</span><span>Submitted ${r.date}</span></div><p style="font-size:12px;color:var(--text2);margin-top:10px;line-height:1.7;">${r.reason}</p><div style="display:flex;gap:7px;margin-top:12px;">${r.status==='Pending'?`<button class="btn btn-sm btn-gold" onclick="allReqs[${i}].status='Approved';buildRequisitions();toast('Requisition approved — creating job listing','ok')">Approve &amp; Post Job</button><button class="btn btn-sm btn-red" onclick="allReqs[${i}].status='Declined';buildRequisitions();toast('Declined','ok')">Decline</button>`:'<button class="btn btn-sm btn-out" onclick="nav(\'postjob\',document.getElementById(\'sbi-postjob\'))">View Job Listing</button>'}</div></div>`).join('');
+}
+function saveReq(){const t=document.getElementById('nr_title')?.value.trim();if(!t){toast('Position title required','');return;}allReqs.unshift({id:'REQ-2026-00'+(allReqs.length+1),title:t,dept:document.getElementById('nr_dept')?.value||'—',count:parseInt(document.getElementById('nr_count')?.value)||1,urgency:document.getElementById('nr_urg')?.value||'Normal',reason:document.getElementById('nr_reason')?.value||'—',status:'Pending',date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})});buildRequisitions();closeM('mNewReq');toast('Requisition submitted','ok');}
+
+/* ── POST JOB ── */
+function publishJob(){
+  const t=document.getElementById('pj_title')?.value.trim(),dept=document.getElementById('pj_dept')?.value,salary=document.getElementById('pj_salary')?.value.trim(),desc=document.getElementById('pj_desc')?.value.trim();
+  if(!t||!salary||!desc){toast('Title, salary and summary are required','');return;}
+  const id='HB-2026-'+(String(JOBS.length+1).padStart(3,'0'));
+  JOBS.push({id,title:t,dept,type:document.getElementById('pj_type')?.value||'Full-time',exp:document.getElementById('pj_exp')?.value||'1–3 years',salary:'XOF '+salary,deadline:document.getElementById('pj_deadline')?.value||'TBD',posted:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),apps:0,featured:false});
+  toast('✓ Job published — now live on the Careers page as job #'+id,'ok');
+  document.querySelectorAll('#pg-postjob .fi').forEach(el=>el.value='');
+  buildJobListings();
+  // Update badge
+  const badge=document.querySelector('#sbi-joblistings .sbadge');
+  if(badge)badge.textContent=JOBS.length;
+}
+
+
+function approveExpRow(i){EXPENSES[i].status='Approved';buildExpenses();toast('Expense approved','ok');}
+function declineExpRow(i){EXPENSES[i].status='Declined';buildExpenses();toast('Expense declined','ok');}
+
+/* ── INIT ── */
+function init(){
+  buildDash();
+  buildNotices();
+  buildEmpTbl();
+  buildAttCalendar();
+  buildMarkAttList();
+  buildLeaves();
+  buildPayroll();
+  buildAwards();
+  buildExpenses();
+  buildHolidays();
+  buildKanban();
+  buildApplicantsTbl();
+  buildShortlist();
+  buildJobListings();
+  buildRequisitions();
+  tick();
+}
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
